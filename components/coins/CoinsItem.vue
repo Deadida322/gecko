@@ -18,7 +18,7 @@
       </v-card-subtitle>
     </div>
     <v-spacer></v-spacer>
-    <div class="pa-2 primary--text">
+    <div class="pa-4 primary--text">
       {{(item.market_data.current_price.usd / getUSDT).toFixed(5)}}
       <span class="font-weight-bold">
         USDT

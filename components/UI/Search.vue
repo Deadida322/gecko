@@ -2,6 +2,8 @@
   <v-text-field
     solo
     clearable
+    @input="search"
+    v-model="query"
     label="Поиск криптовалюты"
     hint="Поиск криптовалюты"
     append-icon="mdi-magnify"
@@ -10,7 +12,17 @@
 
 <script>
 export default {
-  name: "Search"
+  name: "Search",
+  data(){
+    return{
+      query: ''
+    }
+  },
+  methods:{
+    search(){
+      this.$emit('search', this.query)
+    }
+  }
 }
 </script>
 
