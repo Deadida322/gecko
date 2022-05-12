@@ -3,7 +3,21 @@
     <v-expansion-panel>
       <v-expansion-panel-header>Фильтры</v-expansion-panel-header>
       <v-expansion-panel-content>
-        <v-select v-model="sortBy" label="Сортировать по" :items="sortItems" filled dense/>
+        <div class="d-flex align-center">
+          <v-select v-model="sortBy" label="Сортировать по" :items="sortItems" filled dense/>
+          <div @click="reverse=!reverse" class="pb-4">
+            <v-btn dark small v-if="reverse" color="success" class="ml-2" fab>
+              <v-icon x-large>
+                mdi-arrow-down-thin
+              </v-icon>
+            </v-btn>
+            <v-btn dark small v-else="reverse" color="red" class="ml-2 pa-2" fab>
+              <v-icon x-large>
+                mdi-arrow-up-thin
+              </v-icon>
+            </v-btn>
+          </div>
+        </div>
         <v-range-slider
           hint="Цена в USDT"
           max="100000"
@@ -48,14 +62,17 @@ export default {
   },
   data(){
     return({
-      sortBy: '',
+      sortBy: 'name',
+      reverse: false,
       priceArea: [0.01, 100000]
     })
   },
   methods: {
     submitSort(){
       let filters = {
-        sortBy: this.sortBy, priceArea: this.priceArea
+        sortBy: this.sortBy,
+        priceArea: this.priceArea,
+        reverse: this.reverse
       }
       console.log(filters)
       this.$emit('submitSort', filters)

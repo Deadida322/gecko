@@ -4,10 +4,21 @@
       <Search @search="search=$event" class="mt-5"></Search>
       <Filters @submitSort="filters=$event" class="mb-4" :sort-items="sortItems"></Filters>
       <div v-if="coins.length!=0">
-        <CoinsItem class="mb-3" v-for="(item, index) in filteredCoins" :key="index" :item="item"></CoinsItem>
+        <div v-if="filteredCoins.length!=0">
+          <CoinsItem class="mb-3" v-for="(item, index) in filteredCoins" :key="index" :item="item"></CoinsItem>
+        </div>
+        <v-alert
+          v-else
+          border="bottom"
+          color="error"
+          dark
+        >
+          Не обнаружено совпадений
+        </v-alert>
+
       </div>
       <div v-else>
-        <v-sheet v-for="i in 10" class="pb-3" :key="i">
+        <v-sheet v-for="i in 5" class="pb-3" :key="i">
           <v-skeleton-loader
             class="mx-auto"
             height="100"
@@ -16,8 +27,8 @@
         </v-sheet>
       </div>
       <div v-if="!searching && showButton" class="d-flex justify-center">
-        <v-btn v-if="toShow<coins.length" @click="showMore">Показать ещё</v-btn>
-        <v-btn v-else href="#top" @click="toShow=10">Скрыть</v-btn>
+        <v-btn color="primary" v-if="toShow<coins.length" @click="showMore">Показать ещё</v-btn>
+        <v-btn color="primary" v-else href="#top" @click="toShow=5">Скрыть</v-btn>
       </div>
     </v-col>
   </v-row>
@@ -27,7 +38,7 @@
 import Search from "~/components/UI/Search";
 import CoinsItem from "~/components/coins/CoinsItem";
 import Filters from "~/components/UI/Filters";
-import filters from "~/components/UI/Filters";
+import {mapGetters} from "vuex";
 export default {
   components: {
     CoinsItem, Search, Filters
@@ -36,14 +47,15 @@ export default {
   data(){
     return{
       coins: [],
-      toShow: 10,
+      toShow: 5,
       usdt: 0,
       search: '',
       showButton: true,
       searching: false,
       filters: {
         priceArea: [0, 100000],
-        sortBy: null
+        sortBy: null,
+        reverse: false
       },
       sortItems: [
         {
@@ -58,20 +70,20 @@ export default {
     }
   },
   beforeCreate(){
-    this.$store.dispatch('coins/setUSDT').then(res=>this.usdt = res)
     this.$store.dispatch('coins/setCoins').then(res=> {
       this.coins = res
-      console.log(res[2].market_data.current_price.usd)
+      console.log(res)
     })
   },
   methods:{
     showMore(){
       if(this.toShow < this.coins.length){
-        this.toShow+10 <= this.coins.length ? this.toShow+=10 : this.toShow = this.coins.length
+        this.toShow+5 <= this.coins.length ? this.toShow+=5 : this.toShow = this.coins.length
       }
     }
   },
   computed:{
+    ...mapGetters('coins', ['getUSDT']),
     filteredCoins(){
       let coins = [...this.coins]
       if(this.filters.sortBy=='price'){
@@ -84,8 +96,9 @@ export default {
         })
       }
       coins = coins.filter(item=>{
-        return item.market_data.current_price.usd / this.usdt > this.filters.priceArea[0]
-      }).slice(0,this.toShow)
+        return item.market_data.current_price.usd / this.getUSDT > this.filters.priceArea[0]
+      })
+      coins = this.filters.reverse ? coins.reverse().slice(0,this.toShow) : coins.slice(0,this.toShow)
       if(this.search){
         this.searching=true
         return coins.filter(item=>{
@@ -93,17 +106,12 @@ export default {
         })
       }
       this.searching = false
-
-
-
       if (coins.length<this.toShow) {
         this.showButton=false
       }
       else{
         this.showButton=true
       }
-
-
       return coins
     }
   }

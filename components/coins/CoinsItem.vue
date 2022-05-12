@@ -18,11 +18,18 @@
       </v-card-subtitle>
     </div>
     <v-spacer></v-spacer>
-    <div class="pa-4 primary--text">
+    <div class="pa-4 d-flex primary--text">
       {{(item.market_data.current_price.usd / getUSDT).toFixed(5)}}
-      <span class="font-weight-bold">
+      &nbsp
+      <span class="font-weight-bold mr-2">
         USDT
       </span>
+      <v-icon v-if="item.market_data.price_change_24h<0" color="error ml-4">
+        mdi-arrow-down-drop-circle
+      </v-icon>
+      <v-icon v-else color="success ml-4">
+        mdi-arrow-up-drop-circle
+      </v-icon>
     </div>
   </v-card>
 </template>
