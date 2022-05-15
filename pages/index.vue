@@ -96,7 +96,7 @@ export default {
         })
       }
       coins = coins.filter(item=>{
-        return item.market_data.current_price.usd / this.getUSDT > this.filters.priceArea[0]
+        return this.filters.priceArea[1] > (item.market_data.current_price.usd / this.getUSDT) && (item.market_data.current_price.usd / this.getUSDT) > this.filters.priceArea[0]
       })
       coins = this.filters.reverse ? coins.reverse().slice(0,this.toShow) : coins.slice(0,this.toShow)
       if(this.search){

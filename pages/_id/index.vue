@@ -59,9 +59,9 @@
 
 
 </template>
-
 <script>
 import {mapGetters} from "vuex";
+
 import Chart from 'chart.js/auto';
 import BarChart from '~/components/BarChart.vue'
 
@@ -108,7 +108,6 @@ export default {
     this.$axios.get(`coins/${this.$route.params.id}/`)
       .then(res=> {
         this.coin = res.data
-        console.log(res.data)
         this.path.push({
           text: this.coin.id,
           path: this.coin.name
@@ -139,7 +138,9 @@ export default {
         }]
       }
       for(let i in this.coinChart.prices){
-        let label = this.days[this.range].value == '1' ? new Date(this.coinChart.prices[i][0]).toLocaleTimeString() : new Date(this.coinChart.prices[i][0]).toLocaleString()
+        let label = this.days[this.range].value == '1' ?
+          new Date(this.coinChart.prices[i][0]).toLocaleTimeString()
+          : new Date(this.coinChart.prices[i][0]).toLocaleString()
         result.labels.push(label)
         result.datasets[0].data.push(this.coinChart.prices[i][1]/this.getUSDT)
       }
